@@ -12,6 +12,7 @@ export default function Home() {
     <>
       {rocketId !== '' ? <Rocket /> : <Rockets setRocketId={setRocketId} />}
       <button
+        className="object-center"
         onClick={() => {
           navigate('/users');
         }}

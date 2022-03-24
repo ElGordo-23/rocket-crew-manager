@@ -3,6 +3,7 @@ import { gql, GraphQLClient } from 'graphql-request';
 import React, { useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 const endpoint = 'https://api.spacex.land/graphql/';
 
@@ -30,8 +31,8 @@ const useAddUser = () => {
   return useMutation(async (variables) => {
     const { insert_users } = await graphqlClient.request(
       gql`
-        mutation User($name: String!, $rocket: String!) {
-          insert_users(objects: { name: $name, rocket: $rocket }) {
+        mutation User($id: uuid!, $name: String!, $rocket: String!) {
+          insert_users(objects: { id: $id, name: $name, rocket: $rocket }) {
             returning {
               name
               rocket
@@ -67,15 +68,20 @@ export function Rocket() {
       </div>
 
       <>
-        <h1>{data.name}</h1>
+        <h1 className="text-center top-100 font-bold">{data.name}</h1>
         <div>
           <p>{data.description}</p>
         </div>
-        <input onChange={(e) => setUserName(e.currentTarget.value)}></input>
+        <input
+          className="border-black"
+          onChange={(e) => setUserName(e.currentTarget.value)}
+        ></input>
 
         <button
           disabled={isSaving}
-          onClick={() => mutate({ name: userName, rocket: rocketId })}
+          onClick={() =>
+            mutate({ id: uuidv4(), name: userName, rocket: rocketId })
+          }
         >
           Add user
         </button>

@@ -1,34 +1,51 @@
-import { gql, request } from 'graphql-request';
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import { useQuery } from 'react-query';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const endpoint = 'https://api.spacex.land/graphql/';
-
-function useUsers() {
-  return useQuery('users', async () => {
-    const data = await request(
-      endpoint,
-      gql`
-        query {
-          users {
-            name
-            rocket
-          }
-        }
-      `,
-    );
-    console.log(data);
-
-    return data.users;
-  });
-}
+import { useRockets } from '../Hooks/hooks-AllRockets';
+import {
+  useDeleteUser,
+  useUsers,
+  useUsersOnSelectedRocket,
+} from '../Hooks/hooks-Users';
 
 export default function Users() {
-  const { status, data, error, isFetching } = useUsers();
+  const { status, data: users } = useUsers();
+
+  const { data: rocketsData } = useRockets();
+
+  const [selectedRocket, setSelectedRocket] = useState('');
+
+  const {
+    data: usersOnRocket,
+    isLoading: loadingUsers,
+    refetch,
+  } = useUsersOnSelectedRocket(selectedRocket);
+
+  const { mutate } = useDeleteUser();
 
   let navigate = useNavigate();
+
+  function UsersOnRocket() {
+    if (loadingUsers) {
+      return <div>Loading...</div>;
+    } else {
+      return usersOnRocket.map((user) => (
+        <ul>
+          <li key={user.id}>{user.name}</li>
+          <button onClick={() => mutate({ userId: user.id })}>
+            Delete User
+          </button>
+        </ul>
+      ));
+    }
+  }
+
+  function AllUsers() {
+    return users.map((user) => (
+      <p key={user.id}>
+        <p>{user.name}</p>
+      </p>
+    ));
+  }
 
   return (
     <div>
@@ -37,17 +54,23 @@ export default function Users() {
         {status === 'loading' ? (
           'Loading...'
         ) : status === 'error' ? (
-          <span>Error: {error.message}</span>
+          <span>Error</span>
         ) : (
           <>
             <div>
-              {data.map((user) => (
-                <p key={user.id}>
-                  <a>{user.name}</a>
-                </p>
-              ))}
+              <select
+                onChange={(e) => {
+                  setSelectedRocket(e.currentTarget.value);
+                  refetch();
+                }}
+              >
+                <option>Select a Rocket</option>
+                {rocketsData.map((rocket) => (
+                  <option value={rocket.id}>{rocket.id}</option>
+                ))}
+              </select>
+              {selectedRocket === '' ? <AllUsers /> : <UsersOnRocket />}
             </div>
-            <div>{isFetching ? 'Background Updating...' : ' '}</div>
           </>
         )}
       </div>
@@ -57,6 +80,13 @@ export default function Users() {
         }}
       >
         Back
+      </button>
+      <button
+        onClick={() => {
+          setSelectedRocket('');
+        }}
+      >
+        Show All Users
       </button>
     </div>
   );
