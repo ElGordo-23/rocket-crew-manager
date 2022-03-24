@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useRockets } from '../Hooks/hooks-AllRockets';
 
-export function Rockets({ setRocketId }) {
+export function Rockets() {
   const { status, data, error } = useRockets();
 
   return (
@@ -12,7 +12,7 @@ export function Rockets({ setRocketId }) {
         {status === 'loading' ? (
           'Loading...'
         ) : status === 'error' ? (
-          <span>Error: {error.message}</span>
+          <span>Error</span>
         ) : (
           <>
             <div className=" grid grid-cols-2  text-center">
