@@ -49,7 +49,7 @@ export default function Users() {
 
   return (
     <div>
-      <h1>Users</h1>
+      <h1>Passengers</h1>
       <div>
         {status === 'loading' ? (
           'Loading...'

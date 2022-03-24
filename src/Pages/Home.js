@@ -5,16 +5,15 @@ export default function Home() {
   let navigate = useNavigate();
 
   return (
-    <>
+    <div className="">
       <Rockets />
       <button
-        className="object-center"
         onClick={() => {
           navigate('/users');
         }}
       >
-        See users
+        See Passengers
       </button>
-    </>
+    </div>
   );
 }
