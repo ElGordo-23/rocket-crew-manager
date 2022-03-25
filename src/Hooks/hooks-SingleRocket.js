@@ -1,5 +1,6 @@
 import { gql, GraphQLClient } from 'graphql-request';
 import { useMutation, useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 const endpoint = 'https://api.spacex.land/graphql/';
 
@@ -24,21 +25,29 @@ export function useRocket(rocketId) {
 }
 
 export const useAddUser = () => {
-  return useMutation(async (variables) => {
-    const { insert_users } = await graphqlClient.request(
-      gql`
-        mutation User($id: uuid!, $name: String!, $rocket: String!) {
-          insert_users(objects: { id: $id, name: $name, rocket: $rocket }) {
-            returning {
-              name
-              rocket
+  const navigate = useNavigate();
+  return useMutation(
+    async (variables) => {
+      const { insert_users } = await graphqlClient.request(
+        gql`
+          mutation User($id: uuid!, $name: String!, $rocket: String!) {
+            insert_users(objects: { id: $id, name: $name, rocket: $rocket }) {
+              returning {
+                name
+                rocket
+              }
             }
           }
-        }
-      `,
-      variables,
-    );
+        `,
+        variables,
+      );
 
-    return insert_users;
-  });
+      return insert_users;
+    },
+    {
+      onSuccess: () => {
+        navigate('/users');
+      },
+    },
+  );
 };

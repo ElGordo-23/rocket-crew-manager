@@ -30,31 +30,30 @@ export function Rocket() {
           <p>{data.description}</p>
         </div>
         <div className="flex flex-col gap-1">
-          <form className="flex flex-row ">
-            <div className="mt-3">
-              <label className="block mb-2 text-sm font-medium text-gray-900 ">
-                {' '}
-                Add a Passenger
-              </label>
-              <input
-                id="addUser"
-                required
-                className="block w-200 text-sm  bg-gray-50  border-2 border-black cursor-pointer  focus:outline-none mb-2"
-                onChange={(e) => setUserName(e.currentTarget.value)}
-              ></input>
+          <div className="mt-3">
+            <label className="block mb-2 text-sm font-medium text-gray-900 ">
+              {' '}
+              Add a Passenger
+            </label>
+            <input
+              id="addUser"
+              placeholder="Name"
+              required
+              className="block w-200 text-sm  bg-gray-50  border-2 border-black cursor-pointer  focus:outline-none mb-2"
+              onChange={(e) => setUserName(e.currentTarget.value)}
+            ></input>
 
-              <button
-                type="submit"
-                className=" hover:bg-gray-300  font-bold py-2 px-4 border-b-4 border-r-4 border-black w-24"
-                disabled={isSaving}
-                onClick={() =>
-                  mutate({ id: uuidv4(), name: userName, rocket: rocketId })
-                }
-              >
-                Add
-              </button>
-            </div>
-          </form>
+            <button
+              type="submit"
+              className=" hover:bg-green-600  font-bold py-2 px-4 border-4 border-black w-24"
+              disabled={isSaving}
+              onClick={() =>
+                mutate({ id: uuidv4(), name: userName, rocket: rocketId })
+              }
+            >
+              Add
+            </button>
+          </div>
           <button
             className=" hover:bg-gray-300  font-bold py-2 px-4 border-4 border-black w-24"
             onClick={() => {

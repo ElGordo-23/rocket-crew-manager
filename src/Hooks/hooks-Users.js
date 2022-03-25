@@ -1,5 +1,6 @@
 import request, { gql } from 'graphql-request';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 const endpoint = 'https://api.spacex.land/graphql/';
 
@@ -22,27 +23,32 @@ export function useUsers() {
   });
 }
 
-export function useUsersOnSelectedRocket(selectedRocket) {
-  return useQuery('usersOnRocket', async () => {
-    const data = await request(
-      endpoint,
-      gql`
-        query UsersOnRocket($rocket: String!) {
-          users(where: { rocket: { _eq: $rocket } }) {
-            name
-            id
+export function useUsersOnSelectedRocket(selectedRocket, queryOptions) {
+  return useQuery(
+    'usersOnRocket',
+    async () => {
+      const data = await request(
+        endpoint,
+        gql`
+          query UsersOnRocket($rocket: String!) {
+            users(where: { rocket: { _eq: $rocket } }) {
+              name
+              id
+            }
           }
-        }
-      `,
-      { rocket: selectedRocket },
-    );
+        `,
+        { rocket: selectedRocket },
+      );
 
-    return data.users;
-  });
+      return data.users;
+    },
+    queryOptions,
+  );
 }
 
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation(
     async (variables) => {
@@ -65,6 +71,7 @@ export const useDeleteUser = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('users');
+        navigate('/users');
       },
     },
   );
@@ -89,3 +96,34 @@ export function useGetUserById(userId) {
     return user.users;
   });
 }
+
+export const useDeleteAllUsersOnRocket = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation(
+    async (variables) => {
+      const { delete_users } = await request(
+        endpoint,
+        gql`
+          mutation DeleteUserById($rocketId: String!) {
+            delete_users(where: { rocket: { _eq: $rocketId } }) {
+              returning {
+                id
+              }
+            }
+          }
+        `,
+        variables,
+      );
+
+      return delete_users;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('users');
+        navigate('/users');
+      },
+    },
+  );
+};
