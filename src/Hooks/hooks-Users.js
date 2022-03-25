@@ -37,8 +37,6 @@ export function useUsersOnSelectedRocket(selectedRocket) {
       { rocket: selectedRocket },
     );
 
-    console.log(data.users);
-
     return data.users;
   });
 }
@@ -71,3 +69,23 @@ export const useDeleteUser = () => {
     },
   );
 };
+
+export function useGetUserById(userId) {
+  return useQuery('userById', async () => {
+    const user = await request(
+      endpoint,
+      gql`
+        query GetSingleUser($id: uuid!) {
+          users(where: { id: { _eq: $id } }) {
+            name
+            id
+            rocket
+          }
+        }
+      `,
+      { id: userId },
+    );
+
+    return user.users;
+  });
+}

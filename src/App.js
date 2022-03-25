@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Rocket } from './Components/SingleRocket';
 import Home from './Pages/Home';
 import Users from './Pages/Users';
+import { SingleUser } from './Components/SingleUser';
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/users" element={<Users />} />
           <Route path="/rocket/:rocketId" element={<Rocket />} />
+          <Route path="/users/:userId" element={<SingleUser />} />
         </Routes>
       </Router>
     </QueryClientProvider>

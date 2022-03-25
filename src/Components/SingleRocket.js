@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { useAddUser, useRocket } from '../Hooks/hooks-SingleRocket';
+import { useRocket } from '../Hooks/hooks-SingleRocket';
+import { useAddUser } from '../Hooks/hooks-SingleRocket';
+import { useNavigate } from 'react-router-dom';
 
 export function Rocket() {
   const { rocketId } = useParams();
@@ -9,6 +11,8 @@ export function Rocket() {
   const { mutate, isLoading: isSaving } = useAddUser();
   const { isError, data, isLoading } = useRocket(rocketId);
   const [userName, setUserName] = useState('');
+
+  const navigate = useNavigate();
 
   if (isLoading) {
     return 'Loading...';
@@ -18,36 +22,30 @@ export function Rocket() {
   }
 
   return (
-    <div>
-      <div>
-        <Link to="/">Back</Link>
-      </div>
+    <div className="flex justify-center items-center flex-col relative gap-9 top-6">
+      <div className="w-96 gap-8">
+        <h1 className="text-center font-bold text-xl">{data.name}</h1>
 
-      <>
-        <h1 className="text-center top-100 font-bold">{data.name}</h1>
-        <div className="flex-col">
-          <div>
-            <p>{data.description}</p>
-          </div>
-          <form className="relative">
-            <div className="md-6">
-              <label
-                for="addUser"
-                className="block mb-2 text-sm font-medium text-gray-900 "
-              >
+        <div className="">
+          <p>{data.description}</p>
+        </div>
+        <div className="flex flex-col gap-1">
+          <form className="flex flex-row ">
+            <div className="mt-3">
+              <label className="block mb-2 text-sm font-medium text-gray-900 ">
                 {' '}
-                Add Passenger
+                Add a Passenger
               </label>
               <input
                 id="addUser"
                 required
-                className="block w-200 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                className="block w-200 text-sm  bg-gray-50  border-2 border-black cursor-pointer  focus:outline-none mb-2"
                 onChange={(e) => setUserName(e.currentTarget.value)}
               ></input>
 
               <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-r-4 border-blue-700 hover:border-blue-500 rounded"
+                className=" hover:bg-gray-300  font-bold py-2 px-4 border-b-4 border-r-4 border-black w-24"
                 disabled={isSaving}
                 onClick={() =>
                   mutate({ id: uuidv4(), name: userName, rocket: rocketId })
@@ -57,8 +55,16 @@ export function Rocket() {
               </button>
             </div>
           </form>
+          <button
+            className=" hover:bg-gray-300  font-bold py-2 px-4 border-4 border-black w-24"
+            onClick={() => {
+              navigate('/');
+            }}
+          >
+            <Link to="/">Back</Link>
+          </button>
         </div>
-      </>
+      </div>
     </div>
   );
 }
